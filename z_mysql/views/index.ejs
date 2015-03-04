@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="description" content="投米网 - 专注于城市白领的金融服务提供商" />
+		<meta name="keywords" content="投米网,财富管理、普惠金融、金融、基金、借款、贷款、高收益、高流动性、零投宝、合约宝、灵活理财" />
+		<title>添加</title>
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+	 </head>
+	<body>
+
+	<div id="control">
+		<ul>
+			<li>
+				<label for="name">产品名称:</label>
+				<input type="text" placeholder="请输入产品名称" id="name">
+			</li>
+			<li>
+				<label for="price">产品单价:</label>
+				<input type="text" placeholder="请输入产品单价" id="price">
+			</li>
+			<li>
+				<label for="number">产品数量:</label>
+				<input type="text" placeholder="请输入产品数量" id="number">
+			</li>
+			<li>
+				<label for="date">生产日期:</label>
+				<input type="text" placeholder="请输入生产日期" id="date">
+			</li>
+			<li>
+				<label for="pro_u">生产单位:</label>
+				<input type="text" placeholder="请输入生产单位" id="pro_u">
+			</li>
+			<li>
+				<label for="user">检验员:</label>
+				<input type="text" placeholder="请输入检验员" id="user">
+			</li>
+		</ul>
+		<p>
+			<a href="javascript:;">提交</a>
+		</p>
+		<table>
+			<tr>
+				<th>产品名称</th>
+				<th>产品单价</th>
+				<th>产品数量</th>
+				<th>生产日期</th>
+				<th>生产单位</th>
+				<th>检验员</th>
+				<th>操作</th>
+			</tr>
+			<% rows.forEach(function (e){%>
+				<tr title=<%= e.id %>>
+					<td><%= e.name %></td>
+					<td><%= e.price %></td>
+					<td><%= e.number %></td>
+					<td><%= new Date(e.date).toDateString() %></td>
+					<td><%= e.pro_u %></td>
+					<td><%= e.user %></td>
+					<td><a href="javascript:;" class="change">修改</a><a href="javascript:;" class="delete">删除</a></td>
+				</tr>
+			<% }) %>
+		</table>
+	</div>
+	<script type="text/javascript" src="js/jquery-min.js"></script>
+	<script type="text/javascript" src="js/common.js" ></script>
+	</body>
+</html>
