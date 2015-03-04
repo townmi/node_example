@@ -1,5 +1,10 @@
+var util = require('util');
+var fs = require("fs");
+
 var express = require('express');
 var mysql = require("mysql");
+var formidable = require('formidable');
+
 var xlsx = require('node-xlsx');
 var config = require("../config/config.js");
 var app = express();
@@ -19,17 +24,21 @@ var pool = mysql.createPool({
 
 router.get("/", function (req, res){
 
-	res.render("index", {});
-
 	pool.getConnection(function (err, connection) {
 
-		// connection.query('SELECT * FROM pro', function (err, rows) {
+		connection.query('SELECT * FROM excel', function (err, rows){
 
-		// 	res.render("index",{"rows" : rows});
+			res.render("index",{"data" : rows});
 
-		// });
+		});
 
 	});
+
+})
+
+router.get("/file", function (req, res){
+
+	res.render("index", {});
 
 })
 
@@ -38,7 +47,7 @@ router.get("/", function (req, res){
 
 // 	pool.getConnection(function (err, connection) {
 
-// 		connection.query("DELETE FROM pro WHERE id = "+req.body.del, function (err, rows) {
+// 		connection.query("DELETE FROM pro WHERE id = "+req.body.del, function (err, rows){
 
 // 			connection.release();
 
@@ -53,25 +62,37 @@ router.get("/", function (req, res){
 // tijiao
 router.post('/file', function (req, res){
 
-	// var STR = '"'+req.body.name +'","'+ req.body.price +'","'+ req.body.number +'","'+ req.body.date +'","'+ req.body.pro_u +'","'+ req.body.user+'"';
+	var form = new formidable.IncomingForm();
 
-	// pool.getConnection(function (err, connection) {
+	form.uploadDir="./upload";
 
-	// 	// 'INSERT INTO test(name, sex) values("hanmeimei", "1"),("lilie", "0")'
+    form.parse(req, function (err, fields, files){
 
-	// 	connection.query('INSERT INTO pro(name, price, number, date, pro_u, user) values('+STR+')', function (err, rows) {
+    	// fs.renameSync(files.file.path, "./upload/"+files.file.name);
 
-	// 		connection.release();
+    	var obj = xlsx.parse(fs.readFileSync(files.file.path));
 
-	// 		res.redirect(301,"/");
+    	obj[0].data.forEach(function (e, i){
 
-	// 	});
+    		if(i === 0) return;
 
-	// });
+   			var STR = '"'+e[1] +'","'+ e[2] +'","'+ e[3] +'"';
 
-	console.log(req);
+   			pool.getConnection(function (err, connection) {
 
-	res.send(req);
+				connection.query('INSERT INTO excel(name, phone, address) values('+STR+')', function (err, rows){
+
+					connection.release();
+
+					res.send({"target" : true})
+
+				});
+
+			});
+
+    	})
+
+    });
 
 });
 

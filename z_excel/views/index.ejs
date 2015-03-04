@@ -12,17 +12,20 @@
 	<div id="control">
 		<ul>
 			<li>
-				<form action="file" method="post" enctype="multipart/form-data">
+				<form action="/file" method="post" enctype="multipart/form-data" id="form" name="form">
 
 					<label for="file">文件名称:</label>
 					
-					<input type="file"id="file" value="上传文件" id="file">
+					<input type="file"id="file" value="上传文件" id="file" name="file">
 
 					<input type="submit" value="提交">
 
 				</form>
 			</li>
 		</ul>
+		<p>
+			<a href="javascript:;">提交</a>
+		</p>
 		<table>
 			<tr>
 				<th>序列号</th>
@@ -31,6 +34,17 @@
 				<th>地址</th>
 				<th>操作</th>
 			</tr>
+			
+			
+			<% data.forEach(function (e){%>
+				<tr>
+					<td><%= e.id %></td>
+					<td><%= e.name %></td>
+					<td><%= e.phone %></td>
+					<td><%= e.address %></td>
+					<td><a href="javascript:;" class="change">修改</a><a href="javascript:;" class="delete">删除</a></td>
+				</tr>
+			<% }) %>
 			
 		</table>
 	</div>
