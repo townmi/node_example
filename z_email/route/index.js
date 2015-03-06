@@ -7,8 +7,8 @@ var router = express.Router();
 var transporter = nodemailer.createTransport({
     service: 'qq',
     auth: {
-        user: "1047887945@qq.com", // 账号
-        pass: "abcd1234" // 密码
+        user: "xxxxxxxx@qq.com", // 账号
+        pass: "xxxxxx" // 密码
     }
 });
 
@@ -24,7 +24,7 @@ router.get("/", function (req, res){
 router.post("/email", function (req, res){
 
 	var mailOptions = {
-	    from: 'TEST <1047887945@qq.com>', // sender address
+	    from: 'TEST <xxxxxxxxx@qq.com>', // sender address
 	    to: req.body.email, // list of receivers
 	    subject: 'Hello World✔', // Subject line
 	    text: 'Hello world ✔', // plaintext body
