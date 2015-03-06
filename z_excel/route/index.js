@@ -28,6 +28,8 @@ router.get("/", function (req, res){
 
 		connection.query('SELECT * FROM excel', function (err, rows){
 
+			connection.release();
+
 			res.render("index",{"data" : rows});
 
 		});
