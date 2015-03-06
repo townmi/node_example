@@ -19,9 +19,7 @@ router.get("/login", function (req, res){
 
 router.post("/reg", function (req, res){
 
-	console.log(req.body);
-
-	// res.send({"login":true});
+	// console.log(req.body);
 
 	res.redirect("/");
 
