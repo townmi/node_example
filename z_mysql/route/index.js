@@ -13,7 +13,8 @@ var pool = mysql.createPool({
 	port : config.port,
 	user : config.user,
 	database : 'test',
-	password : config.password
+	password : config.password,
+	multipleStatements : true
 })
 
 
@@ -21,9 +22,11 @@ router.get("/", function (req, res){
 
 	pool.getConnection(function (err, connection) {
 
-		connection.query('SELECT * FROM pro', function (err, rows) {
+		connection.query('SELECT * FROM pro ; SELECT * FROM excel', function (err, rows) {
 
 			connection.release();
+
+			console.log(rows);
 
 			res.render("index",{"rows" : rows});
 
