@@ -43,18 +43,22 @@ router.post('/file', function (req, res){
 router.post("/edit", function (req, res){
 
 	var dir = "./public" + req.body.name;
+	
+	var dir2 = "./public/images" + req.body.name;
 
-	// var buf = require('fs').readFileSync(dir);
+	var buf = require('fs').readFileSync(dir);
 
 	// console.log(buf);
-	imageMagick(dir).resize(req.body.width, req.body.height).autoOrient().write(dir, function(err){
+	imageMagick(buf).resize(req.body.width, req.body.height).autoOrient().write(dir2, function(err){
+		
 		if (err) {
 			console.log(err);
 			res.end();
 		}
-		fs.unlink(dir, function() {
-			// return res.end('3');
-		});
+//		fs.unlink(dir, function() {
+//			
+//			
+//		});
     });
 
 })
