@@ -38,9 +38,26 @@
 				</div>
 			</div>
 		</div>
-		<div class="show">
-			
+		<div id="show">
+			<div class="show1">
+				
+			</div>
+			150 X 150
+			<div class="show2">
+				
+			</div>
+			90 X 90
+			<div class="show3">
+				
+			</div>
+			50 X 50
 		</div>
+	</div>
+
+	<div id="post_img">
+		<img src="" alt="">
+		<img src="" alt="">
+		<img src="" alt="">
 	</div>
 	</body>
 	<script type="text/javascript" src="js/jquery-min.js"></script>
@@ -56,7 +73,7 @@
 
 			$.ajax({
 				type: "post",
-				url: "http://10.106.88.70:3000/file",
+				url: "http://10.106.88.43:3000/file",
 				data: data,
 				processData: false,
 	        	contentType: false,
@@ -68,15 +85,21 @@
 
 						$("#back").load(function(){
 
-
-
 							$("#Img .old").show().css("top", (300-$("#Img .old").height())/2);
 
 							$("#face").css("width" , $("#back").outerWidth()).attr("src", data.name);
 
+							$("#show div").css({"background-image" :"url("+ data.name+")"});
 
+							var show1_size = $("#Img .old").width()+"px "+$("#Img .old").height()+"px";
+							var show2_size = $("#Img .old").width()*9/15+"px "+$("#Img .old").height()*9/15+"px";
+							var show3_size = $("#Img .old").width()*5/15+"px "+$("#Img .old").height()*5/15+"px";
 
-							move($("#move"),$("#face"));
+							$("#show .show1").css({"background-size" : show1_size});
+							$("#show .show2").css({"background-size" : show2_size});
+							$("#show .show3").css({"background-size" : show3_size});
+
+							move($("#move"), $("#face"), $("#show .show1"), $("#show .show2"), $("#show .show3"));
 
 						})
 
@@ -92,7 +115,7 @@
 
 		}
 
-		function move(obj,face){
+		function move(obj, face, pic1, pic2, pic3){
 
 			var box = obj;
 			var parent = obj.parent();
@@ -134,7 +157,20 @@
 					face.css({
 						left : -L,
 						top : -T
-					})
+					});
+
+					pic1.css({
+						backgroundPositionX : -L,
+						backgroundPositionY : -T
+					});
+					pic2.css({
+						backgroundPositionX : -(L*9/15),
+						backgroundPositionY : -(T*9/15)
+					});
+					pic3.css({
+						backgroundPositionX : -(L*5/15),
+						backgroundPositionY : -(T*5/15)
+					});
 				});
 				$(document).on('mouseup', function (e){
 					$(document).off("mousemove mouseup");
@@ -155,9 +191,9 @@
 
 				$.ajax({
 					type: "post",
-					url: "http://10.106.88.70:3000/edit",
+					url: "http://10.106.88.43:3000/edit",
 					data: {
-						width : "300",
+						width : $("#Img .old").width(),
 						height : $("#Img .old").height(),
 						name : $("#back").attr("src")
 					},
