@@ -54,7 +54,7 @@
 		</div>
 	</div>
 
-	<div id="post_img">
+	<div id="post_img" style="display: none;">
 		<img src="" alt="">
 		<img src="" alt="">
 		<img src="" alt="">
@@ -73,7 +73,7 @@
 
 			$.ajax({
 				type: "post",
-				url: "http://10.106.88.43:3000/file",
+				url: "http://10.106.88.70:3000/file",
 				data: data,
 				processData: false,
 	        	contentType: false,
@@ -188,17 +188,35 @@
 		$(function(){
 
 			$("#control p a").on("click", function (){
+				
+				console.log($("#move"));
 
 				$.ajax({
 					type: "post",
-					url: "http://10.106.88.43:3000/edit",
+					url: "http://10.106.88.70:3000/edit",
 					data: {
-						width : $("#Img .old").width(),
-						height : $("#Img .old").height(),
-						name : $("#back").attr("src")
+						"width" : $("#Img .old").width(),
+						"height" : $("#Img .old").height(),
+						"left" : parseInt( $("#move").css("left") ),
+						"top" : parseInt( $("#move").css("top") ),
+						"name" : $("#back").attr("src")
 					},
 					success: function (data){
-
+						
+						if(data.target){
+								
+							$("#control").hide();
+								
+							for(var i=0; i<data.arr.length; i++){
+								
+								$("#post_img img").eq(i).attr("src", "images/"+data.arr[i]);
+								
+							}
+							
+							$("#post_img").show();
+							
+						}
+						
 					},
 					error : function (error){
 
