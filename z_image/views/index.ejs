@@ -1,0 +1,178 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="UTF-8"/>
+		<meta name="description" content="" />
+		<meta name="keywords" content="" />
+		<title>添加</title>
+		<link rel="stylesheet" type="text/css" href="css/reset.css">
+	 </head>
+	<body>
+
+	<div id="control">
+		<ul>
+			<li>
+				<form action="/file" method="post" enctype="multipart/form-data" id="form" name="form">
+
+					<label for="file">文件名称:</label>
+					
+					<input type="file" id="file" value="上传头像" name="file" onchange="FileUpload_onselect()">
+					<script type="text/javascript" language="javascript">
+						
+					</script>
+
+					<!-- <input type="submit" value="提交"> -->
+
+				</form>
+			</li>
+		</ul>
+		<p>
+			<a href="javascript:;">提交</a>
+		</p>
+		<div id="Img">
+			<div class="old" style="display: none;">
+				<i class=""></i>
+				<img src="" alt="" id="back">
+				<div id="move">
+					<img src="" alt="" id="face">
+				</div>
+			</div>
+		</div>
+		<div class="show">
+			
+		</div>
+	</div>
+	</body>
+	<script type="text/javascript" src="js/jquery-min.js"></script>
+	<script type="text/javascript">
+
+		function FileUpload_onselect(){
+
+			var formobj =  document.getElementById("form");
+
+			var data = new FormData(formobj);
+
+	    	// data.append('file', $('#file')[0].files[0]);
+
+			$.ajax({
+				type: "post",
+				url: "http://10.106.88.43:3000/file",
+				data: data,
+				processData: false,
+	        	contentType: false,
+				success: function (data) {
+					
+					if(data.target){
+
+						$("#back").attr("src", data.name);
+
+						$("#back").load(function(){
+
+
+
+							$("#Img .old").show().css("top", (300-$("#Img .old").height())/2);
+
+							$("#face").css("width" , $("#back").outerWidth()).attr("src", data.name);
+
+
+
+							move($("#move"),$("#face"));
+
+						})
+
+					}
+
+					// console.log(data);
+
+				},
+				error: function (msg) {
+				   	
+				}
+			});
+
+		}
+
+		function move(obj,face){
+
+			var box = obj;
+			var parent = obj.parent();
+			var see = true;
+
+			// console.log(parent)
+
+			obj.on("mousedown", function (e){
+
+				// console.log(e)
+
+				var X = e.clientX - box.offset().left;
+				var Y = e.clientY - box.offset().top;
+				var W = parent.width();
+				var H = parent.height();
+
+				console.log(X,Y)
+
+				$(document).on('mousemove', function (e){
+
+					var L = e.clientX - X - parent.offset().left;
+					var T = e.clientY - Y - parent.offset().top;
+
+					console.log(L, T)
+
+					if(see){
+
+						if(L < 0+1) L = 0;
+						if(T < 0+1) T = 0;
+						if(L > W-box.outerWidth()-1) L = W-box.outerWidth();
+						if(T > H-box.outerHeight()-1) T = H-box.outerHeight();
+
+					}
+
+					box.css({
+						left : L,
+						top : T
+					});
+					face.css({
+						left : -L,
+						top : -T
+					})
+				});
+				$(document).on('mouseup', function (e){
+					$(document).off("mousemove mouseup");
+				});
+
+				return false;
+
+			})
+
+		}
+	</script>
+	<script type="text/javascript">
+
+
+		$(function(){
+
+			$("#control p a").on("click", function (){
+
+				$.ajax({
+					type: "post",
+					url: "http://10.106.88.43:3000/edit",
+					data: {
+						width : "300",
+						height : $("#Img .old").height(),
+						name : $("#back").attr("src")
+					},
+					success: function (data){
+
+					},
+					error : function (error){
+
+					}
+
+				});
+
+			});
+
+			
+		})
+	</script>
+</html>
