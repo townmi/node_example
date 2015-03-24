@@ -19,7 +19,7 @@ router.get("/", function (req, res){
 
 })
 
-console.log(gm);
+//console.log(gm);
 
 // tijiao
 router.post('/file', function (req, res){
@@ -41,24 +41,54 @@ router.post('/file', function (req, res){
 
 
 router.post("/edit", function (req, res){
-
-	var dir = "./public" + req.body.name;
 	
-	var dir2 = "./public/images" + req.body.name;
+	var w = req.body.width, h = req.body.height, l = req.body.left, t = req.body.top;
+	
+	var t = new Date().getTime();
 
-	var buf = require('fs').readFileSync(dir);
+	var basedir = "./public" + req.body.name;
+	
+	var dir = "./public/images/";
+	
+	var dir1 = "upload/"+t+"150150.jpg";
+	
+	var dir2 = "upload/"+t+"9090.jpg";
+	
+	var dir3 = "upload/"+t+"5050.jpg";
+
+	var buf = require('fs').readFileSync(basedir);
 
 	// console.log(buf);
-	imageMagick(buf).resize(req.body.width, req.body.height).autoOrient().write(dir2, function(err){
+	imageMagick(buf).resize(w, h).crop(150,150,l,t).autoOrient().write(dir+dir1, function(err){
 		
 		if (err) {
 			console.log(err);
-			res.end();
+			return res.end();
 		}
-//		fs.unlink(dir, function() {
-//			
-//			
-//		});
+		
+		imageMagick(buf).resize(w*9/15, h*9/15).crop(90, 90, l*9/15, t*9/15).autoOrient().write(dir+dir2, function(err){
+			
+			if (err) {
+				console.log(err);
+				return res.end();
+			}
+			
+			imageMagick(buf).resize(w*5/15, h*5/15).crop(50, 50, l*5/15, t*5/15).autoOrient().write(dir+dir3, function(err){
+			
+				if (err) {
+					console.log(err);
+					 return res.end();
+				}
+			
+				return res.send({
+					"target" : true,
+					"arr" : [dir1, dir2, dir3]
+				})
+			
+			});
+			
+		});
+		
     });
 
 })
