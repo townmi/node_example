@@ -73,6 +73,7 @@ body{
 }
 
 
+
 .ui_global_progress_bg{
 	height: 4px;
 	background-color: #ff4455;
@@ -426,7 +427,7 @@ body{
 }
 
 .ui_btn{
-	width: 60%;
+	width: 56%;
 	height: 42px;
 	line-height: 42px;
 	display: block;
@@ -440,6 +441,7 @@ body{
 	background-color: #333333;
 	color: #ffffff;
 }
+
 /*edit*/
 
 .ui_base_text{
@@ -586,4 +588,20 @@ body{
 	left: -7px;
 	border-bottom-color: #ffffff;
 	border-top-width: 0;
+}
+
+
+
+
+
+
+
+/*失效的UI*/
+.desabled{
+	background-color: #777777;
+	color: #eeeeee;
+}
+.desabled:hover{
+	background-color: #777777;
+	color: #eeeeee;
 }
