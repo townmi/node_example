@@ -1,0 +1,298 @@
+<!doctype html>
+<html lang="en">
+<head>
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta http-equiv="content-type" content="text/html;charset=utf-8">
+	<meta name="keywords" content="汤海祥, towne, townmi" />
+	<meta name="description" content="汤海祥的个人网站"/>
+	<title>TOWNE--更新中</title>
+	<link rel="stylesheet" type="text/css" href="css/reset.css">
+	<style type="text/css">
+	.ui_captcha{
+		height: 30px;
+		width: 25%;
+		margin-left: 15px;
+		vertical-align: top;
+		border: none;
+	}
+	</style>
+</head>
+<body>
+	<!-- head -->
+	<div class="ui_head_bg">
+		<div class="ui_head">
+			<a href="/" >登陆</a>
+		</div>
+	</div>
+	<!-- head over -->
+
+	<div class="ui_center clear js_center">
+		<div class="ui_login">
+			
+			<form action="">
+				<p class="ui_input_line">
+					<label for="name" class="ui_label">管理员:</label>
+					<input type="text" id="name" class="ui_base_text js_reg" method="username">
+				</p>
+				<p class="ui_input_line">
+					<label for="password" class="ui_label">口令:</label>
+					<input type="text" id="password" class="ui_base_text js_reg" method="password">
+				</p>
+				<p class="ui_input_line">
+					<label for="captcha" class="ui_label">验证码:</label>
+					<input type="text" id="captcha" class="ui_base_text js_reg" style="width:20%;" method="captcha">
+					<img src="" alt="" class="ui_captcha">
+				</p>
+				<p class="ui_input_line" style="margin-top: 30px;">
+					<a href="javascript:;" class="ui_btn">登陆</a>
+				</p>
+			</form>
+		</div>
+	</div>
+
+
+	<!-- foot -->
+	<div class="ui_foot_bg">
+		<div class="ui_foot">
+			<span style="color: #80bd01;">Powered by</span>
+			<a href="http://nodejs.org/" target="_blank" class="node_js">NodeJs</a>
+			&nbsp;&nbsp;&nbsp;&nbsp;<span style="color: #3686be;">Running on</span>
+			<a href="https://www.digitalocean.com/" target="_blank" class="digitalocean">Digitalocean</a>
+			<a href="" class="fr">github</a>
+			<a href="" class="fr">weibo</a>
+		</div>
+	</div>
+	<!-- foot over -->
+
+</body>
+<script type="text/javascript" src="js/jquery-min.js"></script>
+<script type="text/javascript">
+	var base = {
+		username : /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$|^1[3,4,5,7,8]{1}[0-9]{9}$/,
+		phone : /^1[3,4,5,7,8]{1}[0-9]{9}$/,
+		email : /^\w+([-+.]\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/,
+		password:/^(?!\d+$)(?![a-zA-Z]+$)[0-9a-zA-Z]{6,18}$/,
+		nickname : /^[A-Za-z0-9\u4E00-\u9FA5]+$/,
+		identity : /^\d{17}[\d,x,X]$/,
+		bankcard : /^\d{16,19}$/,
+		chinname : /^[\u4E00-\u9FA5]{2,5}(?:·[\u4E00-\u9FA5]{2,5})*$/,
+		captcha : /^\w{4}$/,
+		meassage : {
+			username : ["用户名不能为空","用户名格式错误"],
+			phone : ["手机号码不能为空！", "请输入正确手机号！"],
+			email : ["邮箱格式有误"],
+			password : ["密码不能为空！","密码格式错误","密码不正确"],
+			nickname : ["昵称只能用中文、英文、数字组合"],
+			identity : ["身份证格式错误"],
+			checkIdCard : ["身份证号码错误"],
+			bankcard : ["银行卡格式错误"],
+			chinname : ["中文姓名格式有误"],
+			captcha : ["验证码不能为空！","验证码格式错误！"]
+		}
+	};
+
+	jQuery.fn.tip = function(config){
+
+		// 默认参数集合
+		var config = $.extend(true,{
+			color : "#00589E",
+			excursion_X : 0,
+			excursion_Y : 0,
+			beforeFun : function(){},
+			afterFun : function(){},
+			destory : false
+		}, config);
+
+		config.beforeFun();
+
+		var POS_KEY = $(this).attr("data-pos") ? $(this).attr("data-pos") : "right";
+		var key_bool = "", ID = "";
+
+		// 当前DOM元素有无指向ID，查找tipDOM元素
+		if($(this).attr("direct")){
+			key_bool = $(this).attr("direct");
+			tip = $("#"+key_bool);
+			if(config.destory){
+				$(this).attr("direct","");
+				return tip.remove();
+			}
+		}else{
+			if(config.destory) return;
+			var KEY = new Date().getTime();
+			$(this).attr("direct","ui_tip"+KEY);
+			ID = "ui_tip"+KEY;
+		}
+		// 当前DOM元素的POS
+		var tar_L = $(this).offset().left;
+		var tar_T = $(this).offset().top;
+		var tar_W = $(this).outerWidth();
+		var tar_H = $(this).outerHeight();
+		
+		if(!key_bool){
+			// 如果这个dom元素没有绑定tip的话，生成一个
+			var tip = $("<div>",{
+				"class": "ui_tip",
+				"style": "visibility: hidden;",
+				"id": ID
+			}).appendTo($("body"));
+
+			$("<div>",{
+				"class": "ui_arrow "+ POS_KEY
+			}).appendTo(tip);
+
+			$("<span>",{
+				"class": "ui_content"
+			}).appendTo(tip);
+
+			tip.find(".ui_content").html($(this).attr("data-title"))
+
+		}else{
+			// 已经绑定过tip的直接跳过创建
+			tip.find(".ui_content").html($(this).attr("data-title"));
+
+		}
+		// tip内容变化, pos变化
+		var tip_W = tip.outerWidth();
+		var tip_H = tip.outerHeight();
+		var tip_L, tip_T;
+
+		switch(POS_KEY){
+			case "left":
+				tip_L = tar_L - tip_W - 10 + config.excursion_X;
+				tip_T = tar_T - (tip_H-tar_H)/2 + config.excursion_Y;
+				break;
+			case "top":
+				tip_L = tar_L - (tip_W-tar_W)/2 + config.excursion_X;
+				tip_T = tar_T - tip_H - 10 + config.excursion_Y;
+				break;
+			case "right":
+				tip_L = tar_L + tar_W + 10 + config.excursion_X;
+				tip_T = tar_T - (tip_H-tar_H)/2 + config.excursion_Y;
+				break;
+			case "bottom":
+				tip_L = tar_L - (tip_W-tar_W)/2 + config.excursion_X;
+				tip_T = tar_T + tip_H + 10 + config.excursion_Y;
+				break;
+			default:
+				tip_L = 0 + config.excursion_X;
+				tip_T = 0 + config.excursion_Y;
+		}	
+		// 设置边框的颜色、文字的颜色。手动。
+		tip.css({"border-color" : config.color}).find(".ui_content").css("color",config.color);
+		tip.find(".ui_arrow").css("border-"+POS_KEY+"-color", config.color);
+		// 呈现tip
+		tip.css({"left": tip_L, "top" : tip_T, "visibility" : "visible"}).hide().fadeIn(400,config.afterFun);
+
+	};
+</script>
+<script type="text/javascript">
+
+	var color = ["#00589E", "red", "green"];
+
+	// $("#name").on("blur", function(){
+
+	// 	var className = $(this).attr("class");
+
+	// 	if(!$(this).val()){
+
+	// 		$(this).attr("class", className+" ui_text_error");
+	// 		$(this).attr({"data-title": base.meassage.username[0],"data-pos": "right"}).tip({color: color[1]});
+
+	// 	}else if(!$(this).val().match(base.username)){
+
+	// 		$(this).attr("class", className+" ui_text_error");
+	// 		$(this).attr({"data-title": base.meassage.username[1],"data-pos": "right"}).tip({color: color[1]});
+
+	// 	}else{
+
+	// 		$(this).attr("class", className+" ui_text_success");
+	// 		$(this).tip({destory: true})
+
+	// 	}
+
+	// });
+	// $("#password").on("blur", function(){
+
+	// 	var className = $(this).attr("class");
+
+	// 	if(!$(this).val()){
+
+	// 		$(this).attr("class", className+" ui_text_error");
+	// 		$(this).attr({"data-title": base.meassage.password[0],"data-pos": "right"}).tip({color: color[1]});
+
+	// 	}else if(!$(this).val().match(base.password)){
+
+	// 		$(this).attr("class", className+" ui_text_error");
+	// 		$(this).attr({"data-title": base.meassage.password[1],"data-pos": "right"}).tip({color: color[1]});
+
+	// 	}else{
+
+	// 		$(this).attr("class", className+" ui_text_success");
+	// 		$(this).tip({destory: true})
+
+	// 	}
+
+	// });
+	// $("#captcha").on("blur", function(){
+
+	// 	var className = $(this).attr("class");
+	// 	// $(this).attr("class","");
+
+	// 	if(!$(this).val()){
+
+	// 		this.className = className+" ui_text_error";
+	// 		$(this).attr({"data-title": base.meassage.captcha[0],"data-pos": "right"}).tip({color: color[1], excursion_X: 120});
+
+	// 	}else if(!$(this).val().match(base.captcha)){
+
+	// 		this.className = className+" ui_text_error";
+	// 		$(this).attr({"data-title": base.meassage.captcha[1],"data-pos": "right"}).tip({color: color[1], excursion_X: 120});
+
+	// 	}else{
+
+	// 		$(this).attr("class", className+" ui_text_success");
+	// 		$(this).tip({destory: true})
+
+	// 	}
+
+	// });
+	
+	$(".js_reg").each(function (i, e){
+
+		$(e).attr("data-class", e.className).on("blur", function (){
+
+			var method = $(this).attr("method");
+			var baseClass = $(this).attr("data-class");
+
+			if(!$(this).val()){
+
+				this.className = baseClass+" ui_text_error";
+				if(method === "captcha"){
+					$(this).attr({"data-title": base.meassage[method][0],"data-pos": "right"}).tip({color: color[1], excursion_X: 120});
+				}else{
+					$(this).attr({"data-title": base.meassage[method][0],"data-pos": "right"}).tip({color: color[1]});
+				}
+				
+
+			}else if(!$(this).val().match(base[method])){
+
+				this.className = baseClass+" ui_text_error";
+				if(method === "captcha"){
+					$(this).attr({"data-title": base.meassage[method][0],"data-pos": "right"}).tip({color: color[1], excursion_X: 120});
+				}else{
+					$(this).attr({"data-title": base.meassage[method][0],"data-pos": "right"}).tip({color: color[1]});
+				}
+
+			}else{
+
+				this.className = baseClass+" ui_text_success";
+				$(this).tip({destory: true})
+
+			}
+
+		});
+
+	})
+	
+</script>
+</html>
