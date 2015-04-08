@@ -1,9 +1,11 @@
 var express = require('express');
 var superagent = require("superagent");
-var needle = require("needle");
+// var needle = require("needle");
 var cheerio = require("cheerio");
 
-var Promise = require("bluebird");
+var EventProxy = require("eventproxy");
+
+var ep = new EventProxy();
 
 var app = express();
 
@@ -16,7 +18,7 @@ module.exports = router;
 
 // router.get("/", function (req, res){
 
-	superagent.get('http://www.itoumi.com/').end(function (error, body){
+	superagent.get('http://www.jd.com/').end(function (error, body){
 		var $ = cheerio.load(body.text);
 		// var len = $("a").length, index = 0, timer = null;
 		// console.log(len)
@@ -67,35 +69,48 @@ module.exports = router;
 		})
 
 		console.log(result.length);
-		Promise.promisifyAll(needle);
-		var options = {};
 
-		var current = Promise.resolve();
-		// console.log(needle)
 
-		Promise.map(result, function(URL) {
-		    current = current.then(function () {
-		    	// return superagent.get(URL).set({ 'API-Key': 'foobar', Accept: 'application/json' }).end(function (err, body){
+		// ep 并发
+		ep.after('superagent', result.length, function (list) {
+		// 在所有文件的异步执行结束后将被执行
+		// 所有文件的内容都存在list数组中
+			console.log(list[1].res.text);
+		});
+		for (var i = 0; i < result.length; i++) {
+			superagent.get(result[i]).end(function (err, body){
+		// 触发结果事件
+				ep.emit('superagent', body);
+			});
+		}
 
-		    	// 	return body;
 
-		    	// });
-		        // return superagent.get(URL);
-		        // console.log(needle.getAsync(URL, options))
-		        return needle.getAsync(URL, options);
-		    });
-		    return current;
-		}).map(function(responseAndBody){
-    		return JSON.parse(responseAndBody[1]);
-		}).then(function (results) {
-			console.log(results[20]);
+		// Promise.promisifyAll(superagent);
+		// var options = {};
+
+		// var current = Promise.resolve();
+		// // console.log(needle)
+
+		// Promise.map(result, function(URL) {
+		//     current = current.then(function () {
+		//     	return superagent.get(URL).end(function (err, body){
+
+		//     		// console.log(body)
+		//     		return body.res;
+
+		//     	});
+		//     });
+		//     console.log(current);
+		//     return current;
+		// }).then(function (results) {
+		// 	console.log(results);
 		    
 
-		}).then(function(){
-		    console.log('All Needle requests saved');
-		}).catch(function (e) {
-		    console.log(e);
-		});
+		// }).then(function(){
+		//     console.log('All Needle requests saved');
+		// }).catch(function (e) {
+		//     console.log(e);
+		// });
 		// res.render("index", {key:result})
 		
 	})
