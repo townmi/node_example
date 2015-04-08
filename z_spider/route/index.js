@@ -1,7 +1,10 @@
 var express = require('express');
 var superagent = require("superagent");
+var needle = require("needle");
 var cheerio = require("cheerio");
-var Q = require("q");
+
+var Promise = require("bluebird");
+
 var app = express();
 
 var mem = require("./mem.js");
@@ -11,11 +14,9 @@ var router = express.Router();
 // exports
 module.exports = router;
 
+// router.get("/", function (req, res){
 
-
-router.get("/", function (req, res){
-
-	superagent.get('http://www.jd.com/').end(function (error, body){
+	superagent.get('http://www.itoumi.com/').end(function (error, body){
 		var $ = cheerio.load(body.text);
 		// var len = $("a").length, index = 0, timer = null;
 		// console.log(len)
@@ -64,13 +65,44 @@ router.get("/", function (req, res){
 			// }
 			
 		})
-		res.render("index", {key:result})
+
+		console.log(result.length);
+		Promise.promisifyAll(needle);
+		var options = {};
+
+		var current = Promise.resolve();
+		// console.log(needle)
+
+		Promise.map(result, function(URL) {
+		    current = current.then(function () {
+		    	// return superagent.get(URL).set({ 'API-Key': 'foobar', Accept: 'application/json' }).end(function (err, body){
+
+		    	// 	return body;
+
+		    	// });
+		        // return superagent.get(URL);
+		        // console.log(needle.getAsync(URL, options))
+		        return needle.getAsync(URL, options);
+		    });
+		    return current;
+		}).map(function(responseAndBody){
+    		return JSON.parse(responseAndBody[1]);
+		}).then(function (results) {
+			console.log(results[20]);
+		    
+
+		}).then(function(){
+		    console.log('All Needle requests saved');
+		}).catch(function (e) {
+		    console.log(e);
+		});
+		// res.render("index", {key:result})
 		
 	})
 
 	mem();
 
-});
+// });
 // function foo(result) {
 //     console.log(result);
 //     return result+result;
