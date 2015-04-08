@@ -36,7 +36,9 @@ app.use(favicon(__dirname + '/public/favicon.ico'));
 app.set('view engine', 'ejs');
 
 // route
-app.use(routes)
+app.use(routes);
+app.get("/", routes);
+app.post("/search", routes);
 
 
 // 404

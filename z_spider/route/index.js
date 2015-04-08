@@ -20,11 +20,23 @@ module.exports = router;
 
 router.get("/", function (req, res){
 
+	res.render("index");
+
+});
+
+
+// search
+router.post("/search", function (req ,res){
+
 	var d1 = new Date().getTime();
 
-	superagent.get('http://www.goubaa.com/login/').set({'API-Key': 'foobar', Accept: 'application/json'}).end(function (error, body){
+	var key = req.body.key.split(",");
 
-		// console.log(body.request.url);
+	var reg = new RegExp(key.join("|"),"gi")
+	
+	superagent.get(req.body.url).set({'API-Key': 'foobar', Accept: 'application/json'}).end(function (error, body){
+
+		
 		var $ = cheerio.load(body.text);
 
 		var result = [];
@@ -39,33 +51,32 @@ router.get("/", function (req, res){
 
 		// ep 并发
 		ep.after('superagent', result.length, function (list) {
-			// console.log(list);
-
 
 			var last = [];
 			list.forEach(function (ele){
 				if(ele){
 					var body = ele.blob.toString();
-					//console.log("这里是解析DOM节点")
-					//mem();
-					var $ = cheerio.load(body);
-					var html = $("body").html();
-					// console.log(html)
-					if(typeof html === "string" && html.match(/1/gi)){
+					console.log("这里是解析DOM节点")
+					mem();
+					// var $ = cheerio.load(body);
+					// var html = $("body").html();
+
+					if(typeof body === "string" && reg.test(body)){
+
 						last.push(ele.url);
 					}
 
-					body = $ = html = null;
+					body = $ = body = null;
 				}
 				
 			});
-			// cp.spawn(res(list));
+
 			console.log("爬取首页有效连接共："+result.length+"条", "解析后页面共有链接："+last.length+"条");
-			console.log(list[2].url);
+
 			var d2 = new Date().getTime();
-			res.render("index",{key: last});
+			res.send({arr:last, time:(d2-d1)/1000, ls: list})
 			mem();
-			return console.log("耗时"+(d2-d1)/1000+"秒");
+			return false;
 
 		});
 		for (var i = 0; i < result.length; i++) {
@@ -84,68 +95,8 @@ router.get("/", function (req, res){
 				
 			});
 		}
-
-		// function res(arr){
-		// 	var result = [];
-		// 	arr.forEach(function (e){
-		// 		console.log("---->for________>>>>>>>")
-		// 		mem();
-		// 		var $ = cheerio.load(e);
-		// 		$("a").each(function (i,e){
-		// 			if(e.attribs.href){
-		// 				if(e.attribs.href.match(/javascript/g)){
-
-		// 				}else{
-		// 					result.push(e.attribs.href);
-		// 				}
-
-		// 			}
-					
-		// 		})
-		// 	});
-
-		// 	return result;
-		// }
-
-		// Promise.promisifyAll(superagent);
-		// var options = {};
-
-		// var current = Promise.resolve();
-		// // console.log(needle)
-
-		// Promise.map(result, function(URL) {
-		//     current = current.then(function () {
-		//     	return superagent.get(URL).end(function (err, body){
-
-		//     		// console.log(body)
-		//     		return body.res;
-
-		//     	});
-		//     });
-		//     console.log(current);
-		//     return current;
-		// }).then(function (results) {
-		// 	console.log(results);
-		    
-
-		// }).then(function(){
-		//     console.log('All Needle requests saved');
-		// }).catch(function (e) {
-		//     console.log(e);
-		// });
-		// res.render("index", {key:result})
 		
-	})
+	});
 
 	mem();
-
-});
-// function foo(result) {
-//     console.log(result);
-//     return result+result;
-// }
-// var funcs = [foo,foo,foo];
-// var result = Q('hello');
-// funcs.forEach(function(func){
-//     result = result.then(func);
-// });
+})

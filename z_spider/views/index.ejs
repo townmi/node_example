@@ -5,10 +5,47 @@
 	<title>spider</title>
 </head>
 <body>
-	<% key.forEach(function(e){ %>
-	
-	<%= e %> <br>
-	<% }) %>
-	
+	<div>
+		<form action="">
+			
+			<div>
+				<label for="">爬取得路径</label>
+				<input type="text" id="url">
+			</div>
+
+			<div>
+				<label for="">关键字</label>
+				<input type="text" id="key">
+				<span>用逗号隔开（英文逗号）</span>
+			</div>
+			<div>
+				<a href="javascript:;" id="submit">搜索</a>
+			</div>
+		</form>
+	</div>
 </body>
+<script type="text/javascript" src="js/jquery-min.js"></script>
+<script type="text/javascript">
+	$("#submit").on("click", function(){
+		if(!$("#url").val() || !$("#key").val()) return alert("不能为空");
+
+		$.ajax({
+			type: "post",
+			url: "/search",
+			data: {
+				"url" : $("#url").val(),
+				"key": $("#key").val()
+			},
+
+			dataType: "json",
+			success: function (data) {
+				console.log(data);
+			},
+			error: function (msg) {
+			   	
+			}
+		})
+
+	})
+</script>
 </html>
