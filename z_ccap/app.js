@@ -2,7 +2,6 @@ var express = require('express');
 var app = express();
 var path = require("path");
 var favicon = require('serve-favicon');
-var logger = require('morgan');
 var cookieParser = require('cookie-parser');
 var bodyParser = require('body-parser');
 var http = require('http');
@@ -15,7 +14,6 @@ var http = require('http').Server(app);
 app.set('port', process.env.PROT || 3000);
 app.set('views', path.join(__dirname, 'views'));
 
-app.use(logger('dev'));
 
 // body-parser
 // parse application/x-www-form-urlencoded

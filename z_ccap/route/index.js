@@ -3,6 +3,7 @@ var Buffer = require("buffer").Buffer;
 
 var express = require('express');
 var mysql = require("mysql");
+var ccap = require('ccap')();
 
 var config = require("../config/config.js");
 var mem = require("./mem.js");
@@ -15,7 +16,7 @@ var pool = mysql.createPool({
 	host : config.host,
 	port : config.port,
 	user : config.user,
-	database : 'test',
+	database : 'cms',
 	password : config.password,
 	multipleStatements : true
 })
@@ -23,9 +24,11 @@ var pool = mysql.createPool({
 // exports
 module.exports = router;
 
-router.get("/", function (req, res){
+router.get("/login", function (req, res){
 
-	res.render("index");
+  var cc = ccap.get();
+  console.log(cc[0]);
+  res.render("index",{img: cc[1].toString("base64")});
 
 });
 
